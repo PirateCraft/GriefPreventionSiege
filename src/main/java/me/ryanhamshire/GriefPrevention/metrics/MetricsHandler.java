@@ -1,7 +1,7 @@
 package me.ryanhamshire.GriefPrevention.metrics;
 
-import me.ryanhamshire.GriefPrevention.ClaimsMode;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import me.ryanhamshire.GriefPrevention.claim.ClaimsMode;
 import org.bukkit.World;
 
 import java.util.concurrent.Callable;
