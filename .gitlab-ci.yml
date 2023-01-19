@@ -33,9 +33,9 @@ move:
   stage: copy
   allow_failure: true
   script:
-    - sudo shopt -s nocaseglob
+    - shopt -s nocaseglob
     - sudo cp $CI_PROJECT_DIR/target/*$CI_PROJECT_NAME*.jar /opt/mc.indexoutofmj.net/plugins/plugins
-    - sudo shopt -u nocaseglob
+    - shopt -u nocaseglob
 
 sonarqube-check:
   stage: verify
