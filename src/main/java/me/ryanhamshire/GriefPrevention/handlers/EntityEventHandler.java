@@ -584,7 +584,7 @@ public class EntityEventHandler implements Listener
         if (playerData.siegeData != null)
         {
             //end it, with the dieing player being the loser
-            this.dataStore.endSiege(playerData.siegeData, null, player.getName(), event.getDrops());
+            this.dataStore.endSiege(playerData.siegeData, null, player.getName(), event.getDrops(), false);
         }
 
         //FEATURE: lock dropped items to player who dropped them

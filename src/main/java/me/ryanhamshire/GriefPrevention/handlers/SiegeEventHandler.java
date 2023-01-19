@@ -69,7 +69,6 @@ public class SiegeEventHandler implements Listener
 
         // If under siege, some blocks will be breakable.
         Material broken = null;
-        System.out.println("Breakable block check");
         if (event.getTriggeringEvent() instanceof BlockBreakEvent)
             broken = ((BlockBreakEvent) event.getTriggeringEvent()).getBlock().getType();
         else if (event.getTriggeringEvent() instanceof Claim.CompatBuildBreakEvent triggeringEvent)

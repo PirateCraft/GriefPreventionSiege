@@ -35,7 +35,7 @@ move:
   script:
     - sudo shopt -s nocaseglob
     - sudo cp $CI_PROJECT_DIR/target/*$CI_PROJECT_NAME*.jar /opt/mc.indexoutofmj.net/plugins/plugins
-    - shopt -u nocaseglob
+    - sudo shopt -u nocaseglob
 
 sonarqube-check:
   stage: verify

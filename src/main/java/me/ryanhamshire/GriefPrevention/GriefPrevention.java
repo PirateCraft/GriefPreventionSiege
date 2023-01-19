@@ -24,6 +24,7 @@ import me.ryanhamshire.GriefPrevention.claim.Claim;
 import me.ryanhamshire.GriefPrevention.claim.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.claim.ClaimsMode;
 import me.ryanhamshire.GriefPrevention.claim.CreateClaimResult;
+import me.ryanhamshire.GriefPrevention.claim.events.TrustChangedEvent;
 import me.ryanhamshire.GriefPrevention.data.DataStore;
 import me.ryanhamshire.GriefPrevention.data.DataStore.NoTransferException;
 import me.ryanhamshire.GriefPrevention.data.DatabaseDataStore;
@@ -31,7 +32,6 @@ import me.ryanhamshire.GriefPrevention.data.FlatFileDataStore;
 import me.ryanhamshire.GriefPrevention.data.PlayerData;
 import me.ryanhamshire.GriefPrevention.events.PreventBlockBreakEvent;
 import me.ryanhamshire.GriefPrevention.events.SaveTrappedPlayerEvent;
-import me.ryanhamshire.GriefPrevention.claim.events.TrustChangedEvent;
 import me.ryanhamshire.GriefPrevention.handlers.BlockEventHandler;
 import me.ryanhamshire.GriefPrevention.handlers.EconomyHandler;
 import me.ryanhamshire.GriefPrevention.handlers.EntityEventHandler;
@@ -265,6 +265,24 @@ public class GriefPrevention extends JavaPlugin
     public boolean config_logs_debugEnabled;
     public boolean config_logs_mutedChatEnabled;
 
+    //PirateCraft custom configuration
+    public List<String> config_piratecraft_siege_blocks_breakable_after_win;
+    public int config_piratecraft_siege_attacker_claim_cooldown;
+    public int config_piratecraft_siege_attacker_defender_cooldown;
+    public int config_piratecraft_siege_general_defender_cooldown;
+    public int config_piratecraft_siege_duration;
+    public String config_piratecraft_siege_defender_defeated;
+    public String config_piratecraft_siege_attacker_defeated;
+    public String config_piratecraft_siege_defender_left;
+    public String config_piratecraft_siege_attacker_left;
+    public String config_piratecraft_siege_times_up;
+    public String config_piratecraft_siege_attacker_bossbar_title;
+    public String config_piratecraft_siege_defender_bossbar_title;
+    public String config_piratecraft_siege_attender_bossbar_title;
+    public String config_piratecraft_siege_siege_won_bossbar_title;
+    public List<String> config_piratecraft_siege_siege_ended_commands;
+
+
     //ban management plugin interop settings
     public boolean config_ban_useCommand;
     public String config_ban_commandFormat;
@@ -281,8 +299,7 @@ public class GriefPrevention extends JavaPlugin
     public static final int NOTIFICATION_SECONDS = 20;
 
     //adds a server log entry
-    public static synchronized void AddLogEntry(String entry, CustomLogEntryTypes customLogType, boolean excludeFromServerLogs)
-    {
+    public static synchronized void AddLogEntry(String entry, CustomLogEntryTypes customLogType, boolean excludeFromServerLogs) {
         if (customLogType != null && GriefPrevention.instance.customLogger != null)
         {
             GriefPrevention.instance.customLogger.AddEntry(entry, customLogType);
@@ -811,6 +828,29 @@ public class GriefPrevention extends JavaPlugin
         this.config_logs_debugEnabled = config.getBoolean("GriefPrevention.Abridged Logs.Included Entry Types.Debug", false);
         this.config_logs_mutedChatEnabled = config.getBoolean("GriefPrevention.Abridged Logs.Included Entry Types.Muted Chat Messages", false);
 
+        //PirateCraft custom configuration
+        List<String> breakableBlocksAfterWin = new ArrayList<>();
+        breakableBlocksAfterWin.add(Material.CACTUS.name());
+        this.config_piratecraft_siege_blocks_breakable_after_win = (List<String>) config.getList("GriefPrevention.PirateCraft.Siege.BlocksBreakableAfterWin", breakableBlocksAfterWin);
+
+        this.config_piratecraft_siege_attacker_claim_cooldown = config.getInt("GriefPrevention.PirateCraft.Siege.AttackerClaimCooldown", 3600000);
+        this.config_piratecraft_siege_attacker_defender_cooldown = config.getInt("GriefPrevention.PirateCraft.Siege.AttackerDefenderCooldown", 36000000);
+        this.config_piratecraft_siege_general_defender_cooldown = config.getInt("GriefPrevention.PirateCraft.Siege.GeneralDefenderCooldown", 900000);
+
+        this.config_piratecraft_siege_duration = config.getInt("GriefPrevention.PirateCraft.Siege.Duration", 20);
+
+        this.config_piratecraft_siege_defender_defeated = config.getString("GriefPrevention.PirateCraft.Siege.DefenderDefeated", "&6{attacker} defeated {defender} in siege warfare!");
+        this.config_piratecraft_siege_attacker_defeated = config.getString("GriefPrevention.PirateCraft.Siege.AttackerDefeated", "&c{attacker} has died and {defender} is now free from siege!");
+        this.config_piratecraft_siege_attacker_left = config.getString("GriefPrevention.PirateCraft.Siege.AttackerLeft", "&cThe siege by {attacker} against {defender} is over. {attacker} left.");
+        this.config_piratecraft_siege_times_up = config.getString("GriefPrevention.PirateCraft.Siege.TimesUp", "&cThe siege by {attacker} against {defender} is over. Times up.");
+
+        this.config_piratecraft_siege_attacker_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttackerBossbarTitle", "&cYour siege on {defender}, {time} left");
+        this.config_piratecraft_siege_defender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.DefenderBossbarTitle", "&c{attacker}'s siege on you, {time} left");
+        this.config_piratecraft_siege_attender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttenderBossbarTitle", "&cSiege on {defender}, {time} left");
+        this.config_piratecraft_siege_siege_won_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.SiegeWonBossBarTitle", "&cLooting time left: {time}");
+
+        this.config_piratecraft_siege_siege_ended_commands = config.getStringList("GriefPrevention.PirateCraft.Siege.SiegeEndedCommands");
+
         //claims mode by world
         for (World world : this.config_claims_worldModes.keySet())
         {
@@ -953,6 +993,24 @@ public class GriefPrevention extends JavaPlugin
         outConfig.set("GriefPrevention.Abridged Logs.Included Entry Types.Debug", this.config_logs_debugEnabled);
         outConfig.set("GriefPrevention.Abridged Logs.Included Entry Types.Muted Chat Messages", this.config_logs_mutedChatEnabled);
         outConfig.set("GriefPrevention.ConfigVersion", 1);
+
+        //PirateCraft custom configuration
+        outConfig.set("GriefPrevention.PirateCraft.Siege.BlocksBreakableAfterWin", this.config_piratecraft_siege_blocks_breakable_after_win);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttackerClaimCooldown", this.config_piratecraft_siege_attacker_claim_cooldown);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttackerDefenderCooldown", this.config_piratecraft_siege_attacker_defender_cooldown);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.GeneralDefenderCooldown", this.config_piratecraft_siege_general_defender_cooldown);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.Duration", this.config_piratecraft_siege_duration);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.DefenderDefeated", this.config_piratecraft_siege_defender_defeated);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttackerDefeated", this.config_piratecraft_siege_attacker_defeated);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.DefenderLeft", this.config_piratecraft_siege_defender_left);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttackerLeft", this.config_piratecraft_siege_attacker_left);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.TimesUp", this.config_piratecraft_siege_times_up);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.DefenderBossbarTitle", this.config_piratecraft_siege_attacker_bossbar_title);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttackerBossbarTitle", this.config_piratecraft_siege_defender_bossbar_title);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.AttenderBossbarTitle", this.config_piratecraft_siege_attender_bossbar_title);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.SiegeWonBossBarTitle", this.config_piratecraft_siege_siege_won_bossbar_title);
+        outConfig.set("GriefPrevention.PirateCraft.Siege.SiegeEndedCommands", this.config_piratecraft_siege_siege_ended_commands);
+
 
         try
         {

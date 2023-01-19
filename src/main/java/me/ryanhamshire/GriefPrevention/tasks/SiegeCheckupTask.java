@@ -72,13 +72,13 @@ public class SiegeCheckupTask implements Runnable
         //otherwise attacker wins if the defender runs away
         else if (attackerRemains && !defenderRemains)
         {
-            dataStore.endSiege(this.siegeData, attacker.getName(), defender.getName(), null);
+            dataStore.endSiege(this.siegeData, attacker.getName(), defender.getName(), null, false);
         }
 
         //or defender wins if the attacker leaves
         else if (!attackerRemains && defenderRemains)
         {
-            dataStore.endSiege(this.siegeData, defender.getName(), attacker.getName(), null);
+            dataStore.endSiege(this.siegeData, defender.getName(), attacker.getName(), null, false);
         }
 
         //if they both left, but are still close together, the battle continues (check again later)
@@ -90,7 +90,7 @@ public class SiegeCheckupTask implements Runnable
         //otherwise they both left and aren't close to each other, so call the attacker the winner (defender escaped, possibly after a chase)
         else
         {
-            dataStore.endSiege(this.siegeData, attacker.getName(), defender.getName(), null);
+            dataStore.endSiege(this.siegeData, attacker.getName(), defender.getName(), null, false);
         }
     }
 

@@ -19,10 +19,14 @@
 package me.ryanhamshire.GriefPrevention.data;
 
 import me.ryanhamshire.GriefPrevention.claim.Claim;
+import me.ryanhamshire.GriefPrevention.claim.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.tasks.SiegeBossBarTask;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 //information about an ongoing siege
 public class SiegeData
@@ -36,11 +40,26 @@ public class SiegeData
 
     public SiegeBossBarTask siegeBossBarTask;
 
+    private final Set<Player> permittedPlayers;
+
     public SiegeData(Player attacker, Player defender, Claim claim)
     {
         this.defender = defender;
         this.attacker = attacker;
         this.claims = new ArrayList<>();
         this.claims.add(claim);
+
+        permittedPlayers = new HashSet<>();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            if (claim.checkPermission(player, ClaimPermission.Access, null) == null)
+            {
+                permittedPlayers.add(player);
+            }
+        });
+    }
+
+    public Set<Player> getAllPermittedPlayers()
+    {
+        return permittedPlayers;
     }
 }

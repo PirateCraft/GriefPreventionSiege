@@ -55,6 +55,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1158,18 +1159,18 @@ public abstract class DataStore
         //why isn't this a "repeating" task?
         //because depending on the status of the siege at the time the task runs, there may or may not be a reason to run the task again
         SiegeCheckupTask task = new SiegeCheckupTask(siegeData);
-        SiegeBossBarTask bossBarTask = new SiegeBossBarTask(siegeData, "§7" + attacker.getName() + " §c⚔ " + "§7" + defender.getName() + " §8| §e{time}");
+        SiegeBossBarTask bossBarTask = new SiegeBossBarTask(siegeData, attacker.getName(), defender.getName());
         siegeData.siegeBossBarTask = bossBarTask;
         siegeData.bossBarTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncRepeatingTask(GriefPrevention.instance, bossBarTask, 0L, 20L);
-        siegeData.checkupTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncDelayedTask(GriefPrevention.instance, task, 20L * 30);
+        siegeData.checkupTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncDelayedTask(GriefPrevention.instance, task, 20L * 60);
     }
 
     //ends a siege
     //either winnerName or loserName can be null, but not both
-    synchronized public void endSiege(SiegeData siegeData, String winnerName, String loserName, List<ItemStack> drops)
+    synchronized public void endSiege(@NotNull SiegeData siegeData, String winnerName, String loserName, List<ItemStack> drops, boolean timeUp)
     {
         boolean grantAccess = false;
-        siegeData.siegeBossBarTask.getBossBar().removeAll();
+        siegeData.siegeBossBarTask.removeBossBars();
         Bukkit.getScheduler().cancelTask(siegeData.bossBarTaskID);
 
         //determine winner and loser
@@ -1197,7 +1198,7 @@ public abstract class DataStore
         }
 
         //if the attacker won, plan to open the doors for looting
-        if (siegeData.attacker.getName().equals(winnerName))
+        if (!timeUp && siegeData.attacker.getName().equals(winnerName))
         {
             grantAccess = true;
         }
@@ -1230,11 +1231,14 @@ public abstract class DataStore
 
         //cancel the siege checkup task
         GriefPrevention.instance.getServer().getScheduler().cancelTask(siegeData.checkupTaskID);
-
+        if (timeUp) {
+            GriefPrevention.instance.getServer().broadcastMessage(GriefPrevention.instance.config_piratecraft_siege_times_up.replace("{attacker}", winnerName).replace("{defender}", loserName));
+            return;
+        }
         //notify everyone who won and lost
         if (winnerName != null && loserName != null)
         {
-            GriefPrevention.instance.getServer().broadcastMessage(winnerName + " defeated " + loserName + " in siege warfare!");
+            GriefPrevention.instance.getServer().broadcastMessage(GriefPrevention.instance.config_piratecraft_siege_defender_defeated.replace("{attacker}", winnerName).replace("{defender}", loserName));
         }
 
         //if the claim should be opened to looting
