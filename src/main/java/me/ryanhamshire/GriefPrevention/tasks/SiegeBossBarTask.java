@@ -9,8 +9,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.TimeUnit;
-
 public class SiegeBossBarTask implements Runnable
 {
 
@@ -57,9 +55,9 @@ public class SiegeBossBarTask implements Runnable
     public void run()
     {
         time--;
-        this.attackerBossBar.setTitle(attackerTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
-        this.defenderBossBar.setTitle(defenderTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
-        this.attenderBossBar.setTitle(attenderTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
+        attackerBossBar.setTitle(attackerTitle.replace("{time}", time + " minutes"));
+        defenderBossBar.setTitle(defenderTitle.replace("{time}", time + " minutes"));
+        attenderBossBar.setTitle(attenderTitle.replace("{time}", time + " minutes"));
         double progress = (double) ((time * 100) / GriefPrevention.instance.config_piratecraft_siege_duration) / 100;
         attackerBossBar.setProgress(progress);
         defenderBossBar.setProgress(progress);
