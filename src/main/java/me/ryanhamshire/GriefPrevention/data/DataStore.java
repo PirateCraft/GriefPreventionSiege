@@ -1161,8 +1161,8 @@ public abstract class DataStore
         SiegeCheckupTask task = new SiegeCheckupTask(siegeData);
         SiegeBossBarTask bossBarTask = new SiegeBossBarTask(siegeData, attacker.getName(), defender.getName());
         siegeData.siegeBossBarTask = bossBarTask;
-        siegeData.bossBarTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncRepeatingTask(GriefPrevention.instance, bossBarTask, 0L, 20L);
-        siegeData.checkupTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncDelayedTask(GriefPrevention.instance, task, 20L * 60);
+        siegeData.bossBarTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncRepeatingTask(GriefPrevention.instance, bossBarTask, 0L, 20L * 60);
+        siegeData.checkupTaskID = GriefPrevention.instance.getServer().getScheduler().scheduleSyncDelayedTask(GriefPrevention.instance, task, 20L * 30);
     }
 
     //ends a siege

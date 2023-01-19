@@ -34,9 +34,9 @@ public class SiegeBossBarTask implements Runnable
         this.attackerName = attackerName;
         this.defenderName = defenderName;
 
-        attackerTitle = GriefPrevention.instance.config_piratecraft_siege_attacker_bossbar_title.replace("{defender}", defenderName);
-        defenderTitle = GriefPrevention.instance.config_piratecraft_siege_defender_bossbar_title.replace("{attacker}", attackerName);
-        attenderTitle = GriefPrevention.instance.config_piratecraft_siege_attender_bossbar_title.replace("{defender}", defenderName);
+        attackerTitle = GriefPrevention.instance.config_piratecraft_siege_attacker_bossbar_title.replace("{defender}", defenderName).replace("&", "§");
+        defenderTitle = GriefPrevention.instance.config_piratecraft_siege_defender_bossbar_title.replace("{attacker}", attackerName).replace("&", "§");
+        attenderTitle = GriefPrevention.instance.config_piratecraft_siege_attender_bossbar_title.replace("{defender}", defenderName).replace("&", "§");
 
 
         this.attackerBossBar = Bukkit.createBossBar(attackerTitle, BarColor.YELLOW, BarStyle.SOLID);
