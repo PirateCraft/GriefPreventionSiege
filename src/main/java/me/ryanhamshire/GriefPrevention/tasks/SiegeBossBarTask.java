@@ -46,7 +46,11 @@ public class SiegeBossBarTask implements Runnable
         this.attackerBossBar.addPlayer(siegeData.attacker);
         this.defenderBossBar.addPlayer(siegeData.defender);
 
-        siegeData.getAllPermittedPlayers().forEach(this.attenderBossBar::addPlayer);
+        siegeData.getAllPermittedPlayers().forEach(player -> {
+            if (!player.getName().equalsIgnoreCase(attackerName) && !player.getName().equalsIgnoreCase(defenderName)) {
+                this.attenderBossBar.addPlayer(player);
+            }
+        });
     }
 
     @Override
@@ -56,7 +60,7 @@ public class SiegeBossBarTask implements Runnable
         this.attackerBossBar.setTitle(attackerTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
         this.defenderBossBar.setTitle(defenderTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
         this.attenderBossBar.setTitle(attenderTitle.replace("{time}", TimeUnit.SECONDS.toMinutes(time) + " minutes"));
-        double progress = 1 - ((double) ((time * 100) / GriefPrevention.instance.config_piratecraft_siege_duration) / 10);
+        double progress = (double) ((time * 100) / GriefPrevention.instance.config_piratecraft_siege_duration) / 100;
         attackerBossBar.setProgress(progress);
         defenderBossBar.setProgress(progress);
         attackerBossBar.setProgress(progress);
