@@ -46,7 +46,7 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script:
-    - sudo mvn verify sonar:sonar -Dsonar.projectKey=gitlab-instance-171ddc14_neptunebot_AYLHoFzRioP8OUhoT-EE
+    - sudo mvn verify sonar:sonar -Dsonar.projectKey=the-new-empire_griefpreventionsiege_AYXK5aEn4iFFP71dNpxk
   allow_failure: true
   only:
     - master # or the name of your main branch
