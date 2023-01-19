@@ -839,15 +839,15 @@ public class GriefPrevention extends JavaPlugin
 
         this.config_piratecraft_siege_duration = config.getInt("GriefPrevention.PirateCraft.Siege.Duration", 20);
 
-        this.config_piratecraft_siege_defender_defeated = config.getString("GriefPrevention.PirateCraft.Siege.DefenderDefeated", "&6{attacker} defeated {defender} in siege warfare!");
-        this.config_piratecraft_siege_attacker_defeated = config.getString("GriefPrevention.PirateCraft.Siege.AttackerDefeated", "&c{attacker} has died and {defender} is now free from siege!");
-        this.config_piratecraft_siege_attacker_left = config.getString("GriefPrevention.PirateCraft.Siege.AttackerLeft", "&cThe siege by {attacker} against {defender} is over. {attacker} left.");
-        this.config_piratecraft_siege_times_up = config.getString("GriefPrevention.PirateCraft.Siege.TimesUp", "&cThe siege by {attacker} against {defender} is over. Times up.");
+        this.config_piratecraft_siege_defender_defeated = config.getString("GriefPrevention.PirateCraft.Siege.DefenderDefeated", "&6{attacker} defeated {defender} in siege warfare!").replace("&", "§");
+        this.config_piratecraft_siege_attacker_defeated = config.getString("GriefPrevention.PirateCraft.Siege.AttackerDefeated", "&c{attacker} has died and {defender} is now free from siege!").replace("&", "§");
+        this.config_piratecraft_siege_attacker_left = config.getString("GriefPrevention.PirateCraft.Siege.AttackerLeft", "&cThe siege by {attacker} against {defender} is over. {attacker} left.").replace("&", "§");
+        this.config_piratecraft_siege_times_up = config.getString("GriefPrevention.PirateCraft.Siege.TimesUp", "&cThe siege by {attacker} against {defender} is over. Times up.").replace("&", "§");
 
-        this.config_piratecraft_siege_attacker_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttackerBossbarTitle", "&c{attacker}'s siege on you, {time} left");
-        this.config_piratecraft_siege_defender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.DefenderBossbarTitle", "&cYour siege on {defender}, {time} left");
-        this.config_piratecraft_siege_attender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttenderBossbarTitle", "&cSiege on {defender}, {time} left");
-        this.config_piratecraft_siege_siege_won_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.SiegeWonBossBarTitle", "&cLooting time left: {time}");
+        this.config_piratecraft_siege_attacker_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttackerBossbarTitle", "&c{attacker}'s siege on you, {time} left").replace("&", "§");
+        this.config_piratecraft_siege_defender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.DefenderBossbarTitle", "&cYour siege on {defender}, {time} left").replace("&", "§");
+        this.config_piratecraft_siege_attender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttenderBossbarTitle", "&cSiege on {defender}, {time} left").replace("&", "§");
+        this.config_piratecraft_siege_siege_won_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.SiegeWonBossBarTitle", "&cLooting time left: {time}").replace("&", "§");
 
         this.config_piratecraft_siege_siege_ended_commands = config.getStringList("GriefPrevention.PirateCraft.Siege.SiegeEndedCommands");
 
