@@ -850,7 +850,9 @@ public class GriefPrevention extends JavaPlugin
         this.config_piratecraft_siege_attender_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.AttenderBossbarTitle", "&cSiege on {defender}, {time} left").replace("&", "§");
         this.config_piratecraft_siege_siege_won_bossbar_title = config.getString("GriefPrevention.PirateCraft.Siege.SiegeWonBossBarTitle", "&cLooting time left: {time}").replace("&", "§");
 
-        this.config_piratecraft_siege_siege_ended_commands = config.getStringList("GriefPrevention.PirateCraft.Siege.SiegeEndedCommands");
+        List<String> commandsList = new ArrayList<>();
+        commandsList.add("say Winner: {winner}, Loser: {loser}, Start: {timestamp_started}, Stop: {timestamp_ended}, Taken: {time_taken}");
+        this.config_piratecraft_siege_siege_ended_commands = (List<String>) config.getList("GriefPrevention.PirateCraft.Siege.SiegeEndedCommands", commandsList);
 
         //claims mode by world
         for (World world : this.config_claims_worldModes.keySet())
