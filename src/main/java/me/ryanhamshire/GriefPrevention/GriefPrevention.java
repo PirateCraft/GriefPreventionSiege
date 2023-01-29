@@ -85,6 +85,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -3558,7 +3559,7 @@ public class GriefPrevention extends JavaPlugin
         return this.allowBreak(player, location.getBlock(), location, breakEvent);
     }
 
-    public String allowBreak(Player player, Block block, Location location, BlockBreakEvent breakEvent)
+    public String allowBreak(Player player, Block block, @NotNull Location location, BlockBreakEvent breakEvent)
     {
         if (!GriefPrevention.instance.claimsEnabledForWorld(location.getWorld())) return null;
 
@@ -3592,8 +3593,12 @@ public class GriefPrevention extends JavaPlugin
             //cache the claim for later reference
             playerData.lastClaim = claim;
 
-            //if not in the wilderness, then apply claim rules (permissions, etc)
+            //after siege -> doors are open -> attacker can break blocks //Piratecraft
+            if (claim.doorsOpen && config_piratecraft_siege_blocks_breakable_after_win.contains(breakEvent.getBlock().getType().name())) {
+                return null;
+            }
             Supplier<String> cancel = claim.checkPermission(player, ClaimPermission.Build, breakEvent);
+            //if not in the wilderness, then apply claim rules (permissions, etc)
             if (cancel != null && breakEvent != null)
             {
                 PreventBlockBreakEvent preventionEvent = new PreventBlockBreakEvent(breakEvent);

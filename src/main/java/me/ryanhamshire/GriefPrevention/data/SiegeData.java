@@ -40,6 +40,8 @@ public class SiegeData
 
     public SiegeBossBarTask siegeBossBarTask;
 
+    public long timeStarted;
+
     private final Set<Player> permittedPlayers;
 
     public SiegeData(Player attacker, Player defender, Claim claim)
@@ -48,6 +50,7 @@ public class SiegeData
         this.attacker = attacker;
         this.claims = new ArrayList<>();
         this.claims.add(claim);
+        this.timeStarted = System.currentTimeMillis();
 
         permittedPlayers = new HashSet<>();
         Bukkit.getOnlinePlayers().forEach(player -> {
@@ -61,5 +64,10 @@ public class SiegeData
     public Set<Player> getAllPermittedPlayers()
     {
         return permittedPlayers;
+    }
+
+    public long getTimeStarted()
+    {
+        return timeStarted;
     }
 }

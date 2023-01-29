@@ -64,6 +64,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -1169,6 +1170,9 @@ public abstract class DataStore
     //either winnerName or loserName can be null, but not both
     synchronized public void endSiege(@NotNull SiegeData siegeData, String winnerName, String loserName, List<ItemStack> drops, boolean timeUp)
     {
+        SimpleDateFormat timeTakenFormat = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat startEndFormat = new SimpleDateFormat("MMM dd, yyyy - hh:mm:ss aaa");
+        long timeEnded = System.currentTimeMillis();
         boolean grantAccess = false;
         siegeData.siegeBossBarTask.removeBossBars();
         Bukkit.getScheduler().cancelTask(siegeData.bossBarTaskID);
@@ -1196,6 +1200,19 @@ public abstract class DataStore
                 loserName = siegeData.attacker.getName();
             }
         }
+
+        String finalWinnerName = winnerName;
+        String finalLoserName = loserName;
+        long timeTaken = timeEnded - siegeData.getTimeStarted();
+        GriefPrevention.instance.config_piratecraft_siege_siege_ended_commands.forEach(command -> {
+            command = command
+                    .replace("{winner}", finalWinnerName)
+                    .replace("{loser}", finalLoserName)
+                    .replace("{timestamp_started}", startEndFormat.format(siegeData.getTimeStarted()))
+                    .replace("{timestamp_ended}", startEndFormat.format(timeEnded))
+                    .replace("{time_taken}", timeTakenFormat.format(timeTaken));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        });
 
         //if the attacker won, plan to open the doors for looting
         if (!timeUp && siegeData.attacker.getName().equals(winnerName))
